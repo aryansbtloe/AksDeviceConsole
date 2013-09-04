@@ -13,7 +13,6 @@
 #define APPDELEGATE                                     ((AppDelegate *)[[UIApplication sharedApplication] delegate])
 
 @interface AKSDeviceConsole () {
-	UIView *holderView;
 	UITextView *textView;
 }
 @end
@@ -60,59 +59,48 @@
 
 - (void)addGestureRecogniser {
 	UILongPressGestureRecognizer *recognizer = [UILongPressGestureRecognizer.alloc initWithTarget:self action:@selector(showConsole)];
-	recognizer.minimumPressDuration = 3;
+	recognizer.minimumPressDuration = 1;
 	recognizer.numberOfTouchesRequired = 1;
 	[APPDELEGATE.window addGestureRecognizer:recognizer];
 }
 
 - (void)showConsole {
-	if (holderView == nil) {
-		holderView = [[UIView alloc]initWithFrame:[[UIScreen mainScreen]bounds]];
-		[holderView setBackgroundColor:[UIColor clearColor]];
+	if (textView == nil) {
+		CGRect bounds = [[UIScreen mainScreen] bounds];
+		CGRect viewRectTextView = CGRectMake(15,bounds.size.height - bounds.size.height/3 - 60 ,bounds.size.width-30,bounds.size.height/3);
 
-		UIView *viewForFadeEffect = [[UIView alloc]initWithFrame:[[UIScreen mainScreen]bounds]];
-		[viewForFadeEffect setBackgroundColor:[UIColor blackColor]];
-		viewForFadeEffect.layer.opacity = 0.7;
-
-		UIButton *closeButton = [[UIButton alloc]init];
-		[closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
-		[closeButton addTarget:self action:@selector(hideWithAnimation) forControlEvents:UIControlEventTouchUpInside];
-
-		CGRect viewRect = CGRectInset([[UIScreen mainScreen] bounds], 5, 44);;
-
-		textView = [[UITextView alloc]initWithFrame:viewRect];
+		textView = [[UITextView alloc]initWithFrame:viewRectTextView];
 		[textView setBackgroundColor:[UIColor whiteColor]];
-		textView.layer.borderWidth = 2;
+		textView.layer.borderWidth = 1;
 		textView.layer.masksToBounds = TRUE;
 		textView.layer.cornerRadius  = 4;
 		[textView setEditable:NO];
 
-		[closeButton setFrame:CGRectMake(viewRect.origin.x + viewRect.size.width - 31, viewRect.origin.y + viewRect.size.height - 31, 29, 29)];
+		[APPDELEGATE.window addSubview:textView];
+		[APPDELEGATE.window bringSubviewToFront:textView];
 
-		[holderView addSubview:viewForFadeEffect];
-		[holderView addSubview:textView];
-		[holderView addSubview:closeButton];
-		[APPDELEGATE.window addSubview:holderView];
-		[APPDELEGATE.window bringSubviewToFront:holderView];
+		UISwipeGestureRecognizer * recogniser = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(hideWithAnimation)];
+		[recogniser setDirection:UISwipeGestureRecognizerDirectionLeft];
+		[textView addGestureRecognizer:recogniser];
 
-		[self fadeInThisView:[[NSArray alloc]initWithObjects:holderView, nil] duration:0.75];
-
+		[self fadeInThisView:[[NSArray alloc]initWithObjects:textView, nil] duration:0.40];
 		[self setUpToGetLogData];
 		[self scrollToLast];
 	}
 }
 
 - (void)hideWithAnimation {
-	[self fadeOutThisView:[[NSArray alloc]initWithObjects:holderView, nil] duration:0.5];
+	[self moveThisViewTowardsLeft:[[NSArray alloc]initWithObjects:textView, nil] duration:0.30];
+	[self fadeOutThisView:[[NSArray alloc]initWithObjects:textView, nil] duration:0.40];
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 	    [self hideConsole];
 	});
 }
 
 - (void)hideConsole {
-	[holderView removeFromSuperview];
+	[textView removeFromSuperview];
 	[NSNotificationCenter.defaultCenter removeObserver:self];
-	holderView  = nil;
+	textView  = nil;
 }
 
 - (void)scrollToLast {
@@ -138,7 +126,11 @@
 		textView.editable = YES;
 		textView.text = [textView.text stringByAppendingString:string];
 		textView.editable = NO;
-		[self scrollToLast];
+		double delayInSeconds = 1.0;
+		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+			[self scrollToLast];
+		});
 		[notification.object readInBackgroundAndNotify];
 	}
 	else {
@@ -149,7 +141,6 @@
 - (void)refreshLog:(NSNotification *)notification {
 	[notification.object readInBackgroundAndNotify];
 }
-
 
 - (void)fadeInThisView:(NSArray *)views duration:(float)dur;
 {
@@ -183,5 +174,22 @@
          }];
 	}
 }
+
+- (void)moveThisViewTowardsLeft:(NSArray *)views duration:(float)dur;
+{
+	for (int i = 0; i  < views.count; i++) {
+		UIView *view = [views objectAtIndex:i];
+
+		[UIView animateWithDuration:dur animations: ^
+         {
+			 [view setFrame:CGRectMake(view.frame.origin.x - [[UIScreen mainScreen]bounds].size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height)];
+         }
+
+		                 completion: ^(BOOL finished)
+         {
+         }];
+	}
+}
+
 
 @end
