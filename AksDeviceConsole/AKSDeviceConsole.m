@@ -74,6 +74,7 @@
 		textView.layer.borderWidth = 1;
 		textView.layer.masksToBounds = TRUE;
 		textView.layer.cornerRadius  = 4;
+		[textView setFont:[UIFont systemFontOfSize:10]];
 		[textView setEditable:NO];
 
 		[APPDELEGATE.window addSubview:textView];

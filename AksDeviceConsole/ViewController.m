@@ -20,13 +20,12 @@
 	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(printTestData) userInfo:nil repeats:YES];
 }
 -(void)printTestData{
-	NSLog(@"\n\n\n\n\n\n\n\n\n\n\n______________ON DEVICE CONSOLE__________");
+	NSLog(@"\n______________ON DEVICE CONSOLE__________");
 	NSLog(@"all your device console text can be seen using this control");
 	NSLog(@"so enjoy smart coding");
-	NSLog(@"USAGE:");
-	NSLog(@"just do a three seconds touch gesture from any where of your application.");
-	NSLog(@"and console will popup automatically.");
-	NSLog(@"Just write       [AKSDeviceConsole startService]      in application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions\n\n\n\n\n\n\n\n\n");
+	NSLog(@"touch 1 sec to show and swipe left to hide the console.");
+	NSLog(@"swipe left to hide console.");
+	NSLog(@"Just write [AKSDeviceConsole startService] in didFinishLaunchingWithOptions\n");
 }
 
 - (void)didReceiveMemoryWarning
