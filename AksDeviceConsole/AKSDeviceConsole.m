@@ -12,6 +12,7 @@
 #define AKS_LOG_FILE_PATH [[AKSDeviceConsole documentsDirectory] stringByAppendingPathComponent:@"ns.log"]
 #define APPDELEGATE                                     ((AppDelegate *)[[UIApplication sharedApplication] delegate])
 
+
 @interface AKSDeviceConsole () {
 	UITextView *textView;
 }
@@ -58,52 +59,46 @@
 }
 
 - (void)addGestureRecogniser {
-	UILongPressGestureRecognizer *recognizer = [UILongPressGestureRecognizer.alloc initWithTarget:self action:@selector(showConsole)];
-	recognizer.minimumPressDuration = 1;
-	recognizer.numberOfTouchesRequired = 1;
-	[APPDELEGATE.window addGestureRecognizer:recognizer];
+	UISwipeGestureRecognizer *recogniser = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(showConsole)];
+	[recogniser setDirection:UISwipeGestureRecognizerDirectionRight];
+	[APPDELEGATE.window addGestureRecognizer:recogniser];
 }
 
 - (void)showConsole {
 	if (textView == nil) {
 		CGRect bounds = [[UIScreen mainScreen] bounds];
-		CGRect viewRectTextView = CGRectMake(15,bounds.size.height - bounds.size.height/3 - 60 ,bounds.size.width-30,bounds.size.height/3);
+		CGRect viewRectTextView = CGRectMake(30, bounds.size.height - bounds.size.height / 3 - 60, bounds.size.width - 30, bounds.size.height / 3);
 
 		textView = [[UITextView alloc]initWithFrame:viewRectTextView];
-		[textView setBackgroundColor:[UIColor whiteColor]];
-		textView.layer.borderWidth = 1;
-		textView.layer.masksToBounds = TRUE;
-		textView.layer.cornerRadius  = 4;
+		[textView setBackgroundColor:[UIColor blackColor]];
 		[textView setFont:[UIFont systemFontOfSize:10]];
 		[textView setEditable:NO];
+		[textView setTextColor:[UIColor whiteColor]];
+		[[textView layer]setOpacity:0.6];
 
 		[APPDELEGATE.window addSubview:textView];
 		[APPDELEGATE.window bringSubviewToFront:textView];
 
-		UISwipeGestureRecognizer * recogniser = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(hideWithAnimation)];
+		UISwipeGestureRecognizer *recogniser = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(hideWithAnimation)];
 		[recogniser setDirection:UISwipeGestureRecognizerDirectionLeft];
 		[textView addGestureRecognizer:recogniser];
 
-		[self fadeInThisView:[[NSArray alloc]initWithObjects:textView, nil] duration:0.40];
+		[self moveThisViewTowardsLeftToRight:textView duration:0.30];
 		[self setUpToGetLogData];
 		[self scrollToLast];
 	}
 }
-
 - (void)hideWithAnimation {
-	[self moveThisViewTowardsLeft:[[NSArray alloc]initWithObjects:textView, nil] duration:0.30];
-	[self fadeOutThisView:[[NSArray alloc]initWithObjects:textView, nil] duration:0.40];
+	[self moveThisViewTowardsLeft:textView duration:0.30];
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 	    [self hideConsole];
 	});
 }
-
 - (void)hideConsole {
 	[textView removeFromSuperview];
 	[NSNotificationCenter.defaultCenter removeObserver:self];
 	textView  = nil;
 }
-
 - (void)scrollToLast {
 	NSRange txtOutputRange;
 	txtOutputRange.location = textView.text.length;
@@ -113,13 +108,11 @@
 	[textView setSelectedRange:txtOutputRange];
 	textView.editable = NO;
 }
-
-- (void)setUpToGetLogData {
+- (void)setUpToGetLogData { 
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:AKS_LOG_FILE_PATH];
 	[NSNotificationCenter.defaultCenter addObserver:self selector:@selector(getData:) name:@"NSFileHandleReadCompletionNotification" object:fileHandle];
 	[fileHandle readInBackgroundAndNotify];
 }
-
 - (void)getData:(NSNotification *)notification {
 	NSData *data = notification.userInfo[NSFileHandleNotificationDataItem];
 	if (data.length) {
@@ -129,8 +122,8 @@
 		textView.editable = NO;
 		double delayInSeconds = 1.0;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-		dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-			[self scrollToLast];
+		dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+		    [self scrollToLast];
 		});
 		[notification.object readInBackgroundAndNotify];
 	}
@@ -138,59 +131,20 @@
 		[self performSelector:@selector(refreshLog:) withObject:notification afterDelay:1.0];
 	}
 }
-
 - (void)refreshLog:(NSNotification *)notification {
 	[notification.object readInBackgroundAndNotify];
 }
-
-- (void)fadeInThisView:(NSArray *)views duration:(float)dur;
-{
-	for (int i = 0; i  < views.count; i++) {
-		UIView *view = [views objectAtIndex:i];
-
-		view.alpha = 0;
-		view.hidden = NO;
-
-		[UIView animateWithDuration:dur animations: ^
-         {
-             view.alpha = 1;
-         }];
-	}
+- (void)moveThisViewTowardsLeft:(UIView *)view duration:(float)dur; {
+	[UIView animateWithDuration:dur animations: ^{
+	    [view setFrame:CGRectMake(view.frame.origin.x - [[UIScreen mainScreen]bounds].size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height)];
+	} completion: ^(BOOL finished) {}];
 }
-
-
-- (void)fadeOutThisView:(NSArray *)views duration:(float)dur;
-{
-	for (int i = 0; i  < views.count; i++) {
-		UIView *view = [views objectAtIndex:i];
-
-		[UIView animateWithDuration:dur animations: ^
-         {
-             view.alpha = 0;
-         }
-
-		                 completion: ^(BOOL finished)
-         {
-             view.hidden = YES;
-         }];
-	}
+- (void)moveThisViewTowardsLeftToRight:(UIView *)view duration:(float)dur; {
+	CGRect original = [view frame];
+	[view setFrame:CGRectMake(view.frame.origin.x - [[UIScreen mainScreen]bounds].size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height)];
+	[UIView animateWithDuration:dur animations: ^{
+	    [view setFrame:original];
+	} completion: ^(BOOL finished) {}];
 }
-
-- (void)moveThisViewTowardsLeft:(NSArray *)views duration:(float)dur;
-{
-	for (int i = 0; i  < views.count; i++) {
-		UIView *view = [views objectAtIndex:i];
-
-		[UIView animateWithDuration:dur animations: ^
-         {
-			 [view setFrame:CGRectMake(view.frame.origin.x - [[UIScreen mainScreen]bounds].size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height)];
-         }
-
-		                 completion: ^(BOOL finished)
-         {
-         }];
-	}
-}
-
 
 @end

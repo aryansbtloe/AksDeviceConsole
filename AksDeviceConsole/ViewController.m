@@ -14,24 +14,17 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+- (void)viewDidLoad {
+	[super viewDidLoad];
 	[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(printTestData) userInfo:nil repeats:YES];
 }
--(void)printTestData{
+
+- (void)printTestData {
 	NSLog(@"\n______________ON DEVICE CONSOLE__________");
 	NSLog(@"all your device console text can be seen using this control");
-	NSLog(@"so enjoy smart coding");
-	NSLog(@"touch 1 sec to show and swipe left to hide the console.");
-	NSLog(@"swipe left to hide console.");
+	NSLog(@"swipe left and right to hide and show the console.");
 	NSLog(@"Just write [AKSDeviceConsole startService] in didFinishLaunchingWithOptions\n");
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+	NSLog(@"Enjoy easy debugging\n");
 }
 
 @end
