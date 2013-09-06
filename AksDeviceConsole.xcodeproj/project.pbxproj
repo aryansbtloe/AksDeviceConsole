@@ -21,8 +21,6 @@
 		5C07661B17D489B900749C33 /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C07661917D489B900749C33 /* ViewController_iPad.xib */; };
 		5C07662317D489F100749C33 /* AKSDeviceConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C07662217D489F100749C33 /* AKSDeviceConsole.m */; };
 		5C07662517D48BE900749C33 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C07662417D48BE900749C33 /* QuartzCore.framework */; };
-		5C07662917D48CE500749C33 /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07662717D48CE500749C33 /* close.png */; };
-		5C07662A17D48CE500749C33 /* close@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C07662817D48CE500749C33 /* close@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,8 +44,6 @@
 		5C07662117D489F100749C33 /* AKSDeviceConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKSDeviceConsole.h; sourceTree = "<group>"; };
 		5C07662217D489F100749C33 /* AKSDeviceConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKSDeviceConsole.m; sourceTree = "<group>"; };
 		5C07662417D48BE900749C33 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		5C07662717D48CE500749C33 /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = close.png; sourceTree = "<group>"; };
-		5C07662817D48CE500749C33 /* close@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +92,6 @@
 		5C07660117D489B900749C33 /* AksDeviceConsole */ = {
 			isa = PBXGroup;
 			children = (
-				5C07662617D48CE500749C33 /* resource */,
 				5C07662117D489F100749C33 /* AKSDeviceConsole.h */,
 				5C07662217D489F100749C33 /* AKSDeviceConsole.m */,
 				5C07660A17D489B900749C33 /* AppDelegate.h */,
@@ -122,15 +117,6 @@
 				5C07661117D489B900749C33 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5C07662617D48CE500749C33 /* resource */ = {
-			isa = PBXGroup;
-			children = (
-				5C07662717D48CE500749C33 /* close.png */,
-				5C07662817D48CE500749C33 /* close@2x.png */,
-			);
-			path = resource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,8 +176,6 @@
 				5C07661217D489B900749C33 /* Default-568h@2x.png in Resources */,
 				5C07661817D489B900749C33 /* ViewController_iPhone.xib in Resources */,
 				5C07661B17D489B900749C33 /* ViewController_iPad.xib in Resources */,
-				5C07662917D48CE500749C33 /* close.png in Resources */,
-				5C07662A17D48CE500749C33 /* close@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +322,7 @@
 				5C07662017D489B900749C33 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
